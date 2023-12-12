@@ -65,6 +65,12 @@ public class Movies extends MoviesForm{
         MoviesDAO moviesDAO = new MoviesDAO();
         moviesDAO.register(m);
 
+        txtID.setText("");
+        txtTitulo.setText("");
+        txtAno.setText("");
+        txtDiretor.setText("");
+        txtGenero.setText("");
+
         moviesDAO.show(tbMovies);
     }
 
