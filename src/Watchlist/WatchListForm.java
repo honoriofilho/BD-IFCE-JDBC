@@ -1,11 +1,12 @@
+package Watchlist;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.sql.*;
+import java.sql.SQLException;
 
-public abstract class MoviesForm extends JFrame {
+public abstract class WatchListForm extends JFrame {
 
     private static final int TAM = 15;
 
@@ -16,37 +17,25 @@ public abstract class MoviesForm extends JFrame {
     protected JPanel pnlTable;
     protected JPanel pnlSearch;
     protected JPanel pnlNorth;
-    protected JPanel pnlRadioButton;
 
     //Imagem
     protected Icon imgPesquisa;
 
     //Tabela
-    protected JTable tbMovies;
+    protected JTable tbWL;
 
     //Campo de Pesquisa
     protected JLabel lblPesquisa;
     protected JTextField txtPesquisa;
 
     //ID Filme
-    protected JLabel lblID;
-    protected JTextField txtID;
+    protected JLabel lblWL;
+    protected JTextField txtWL;
 
     // Titulo do Filme
-    protected JLabel lblTitulo;
-    protected JTextField txtTitulo;
+    protected JLabel lblNomeWL;
+    protected JTextField txtNomeWL;
 
-    // Ano do Filme
-    protected JLabel lblAno;
-    protected JTextField txtAno;
-
-    // Diretor do Filme
-    protected JLabel lblDiretor;
-    protected JTextField txtDiretor;
-
-    // Gênero do Filme
-    protected JLabel lblGenero;
-    protected JTextField txtGenero;
 
     //Botão de Salvar
     protected JButton btnSalvar;
@@ -69,20 +58,6 @@ public abstract class MoviesForm extends JFrame {
     //Botão de Editar
     protected JButton btnEditar;
 
-    //RadioButton do Titulo
-    protected JRadioButton rdbTitulo;
-
-    //RadioButton do Ano
-    protected JRadioButton rdbAno;
-
-    //RadioButton do Diretor
-    protected JRadioButton rdbDiretor;
-
-    //RadioButton do Genero
-    protected JRadioButton rdbGenero;
-
-    //ButtonGroup dos RadioButtons
-    protected ButtonGroup bntGroup;
 
     Image imgBackground = new ImageIcon("background.jpg").getImage();
 
@@ -93,23 +68,25 @@ public abstract class MoviesForm extends JFrame {
         // Chama o método paint padrão da superclasse para garantir o comportamento correto
         super.paint(g);
     }
-
-    public MoviesForm(){
+    public WatchListForm(){
         this.inicializar();
         this.eventos();
     }
 
-    private void inicializar() {
-        this.setTitle("Cadastrar Filmes");
+    public void inicializar(){
+        this.setTitle("WatchList de Filmes");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
         this.setResizable(false);
+
 
         this.getContentPane().add(getPnLCenter(), BorderLayout.CENTER);
         this.getContentPane().add(getPnlRodape(), BorderLayout.PAGE_END);
         this.getContentPane().add(getPnlNorth(), BorderLayout.NORTH);
 
-        this.pack();
+        //this.pack();
+        this.setSize(942,626);
+
     }
 
     protected abstract void btnSalvarClick(ActionEvent ev) throws SQLException;
@@ -137,20 +114,6 @@ public abstract class MoviesForm extends JFrame {
                 throw new RuntimeException(e);
             }
         });
-        btnPesquisa.addActionListener(ev -> {
-            try {
-                btnPesquisarClick(ev);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        btnExcluir.addActionListener(ev -> {
-            try {
-                btnExcluirClick(ev);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
         btnAtualizar.addActionListener(ev -> {
             try {
                 btnAtualizarClick(ev);
@@ -161,6 +124,20 @@ public abstract class MoviesForm extends JFrame {
         btnEditar.addActionListener(ev -> {
             try {
                 btnEditarClick(ev);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        btnPesquisa.addActionListener(ev -> {
+            try {
+                btnPesquisarClick(ev);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        btnExcluir.addActionListener(ev -> {
+            try {
+                btnExcluirClick(ev);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -179,11 +156,11 @@ public abstract class MoviesForm extends JFrame {
 
     public JPanel getPnlNorth(){
         if (pnlNorth == null){
-            pnlNorth = new JPanel(new GridLayout(2, 1));
+            pnlNorth = new JPanel(new GridLayout(1, 1));
 
-            pnlNorth.setBorder(new EmptyBorder(5, 5, 5, 5));
+            pnlNorth.setBorder(new EmptyBorder(25, 5, 25, 5));
 
-            pnlNorth.add(getPnlRadioButton());
+            //pnlNorth.add(getPnlRadioButton());
             pnlNorth.add(getPnlSearch());
         }
         return pnlNorth;
@@ -200,7 +177,7 @@ public abstract class MoviesForm extends JFrame {
             txtPesquisa.setPreferredSize(new Dimension(200, 40));
             btnPesquisa = new JButton(imgPesquisa);
 
-            // pnlSearch.setBorder(new EmptyBorder(5, 5, 5, 5));
+            //pnlSearch.setBorder(new EmptyBorder(5, 5, 5, 5));
 
             pnlSearch.add(lblPesquisa);
             pnlSearch.add(txtPesquisa);
@@ -210,36 +187,12 @@ public abstract class MoviesForm extends JFrame {
         return pnlSearch;
     }
 
-    public JPanel getPnlRadioButton(){
-        if (pnlRadioButton == null) {
-            pnlRadioButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 15));
-
-            rdbTitulo = new JRadioButton("Titulo");
-            rdbAno = new JRadioButton("Ano");
-            rdbDiretor = new JRadioButton("Diretor");
-            rdbGenero = new JRadioButton("Genero");
-
-            bntGroup = new ButtonGroup();
-            bntGroup.add(rdbTitulo);
-            bntGroup.add(rdbAno);
-            bntGroup.add(rdbDiretor);
-            bntGroup.add(rdbGenero);
-
-            pnlRadioButton.add(rdbTitulo);
-            pnlRadioButton.add(rdbAno);
-            pnlRadioButton.add(rdbDiretor);
-            pnlRadioButton.add(rdbGenero);
-
-        }
-        return pnlRadioButton;
-    }
-
     public JPanel getPnlTable(){
         if (pnlTable == null){
             pnlTable = new JPanel(new FlowLayout());
 
-            tbMovies = new JTable();
-            pnlTable.add(new JScrollPane(tbMovies));
+            tbWL = new JTable();
+            pnlTable.add(new JScrollPane(tbWL));
         }
         return pnlTable;
     }
@@ -248,38 +201,20 @@ public abstract class MoviesForm extends JFrame {
         if (pnlForm == null){
             pnlForm = new JPanel(new GridLayout(5, 2, 10, 10));
 
-            lblID = new JLabel("ID Filme");
-            txtID = new JTextField(TAM);
-            txtID.setEditable(false);
+            lblWL = new JLabel("ID Watchlist");
+            txtWL = new JTextField(TAM);
+            txtWL.setEditable(false);
 
-            lblTitulo = new JLabel("Titulo");
-            txtTitulo = new JTextField(TAM);
-
-            lblAno = new JLabel("Ano");
-            txtAno = new JTextField(TAM);
-
-            lblDiretor = new JLabel("Diretor");
-            txtDiretor = new JTextField(TAM);
-
-            lblGenero = new JLabel("Genero");
-            txtGenero = new JTextField(TAM);
+            lblNomeWL = new JLabel("Nome");
+            txtNomeWL = new JTextField(TAM);
 
             pnlForm.setBorder(new EmptyBorder(4, 30, 200, 20));
 
-            pnlForm.add(lblID);
-            pnlForm.add(txtID);
+            pnlForm.add(lblWL);
+            pnlForm.add(txtWL);
 
-            pnlForm.add(lblTitulo);
-            pnlForm.add(txtTitulo);
-
-            pnlForm.add(lblAno);
-            pnlForm.add(txtAno);
-
-            pnlForm.add(lblDiretor);
-            pnlForm.add(txtDiretor);
-
-            pnlForm.add(lblGenero);
-            pnlForm.add(txtGenero);
+            pnlForm.add(lblNomeWL);
+            pnlForm.add(txtNomeWL);
         }
         return pnlForm;
     }
@@ -289,8 +224,8 @@ public abstract class MoviesForm extends JFrame {
             pnlRodape = new JPanel(new FlowLayout(FlowLayout.CENTER,50, 15));
 
             btnSalvar = new JButton("Salvar Registro");
-            btnFechar = new JButton("Sair do Aplicativo");
-            btnListar = new JButton("Listar Filmes");
+            btnFechar = new JButton("Voltar ao Início");
+            btnListar = new JButton("WatchLists");
             btnExcluir = new JButton("Excluir Registro");
             btnAtualizar = new JButton("Atualizar Registro");
             btnEditar = new JButton("Editar Registro");
@@ -306,4 +241,6 @@ public abstract class MoviesForm extends JFrame {
         }
         return pnlRodape;
     }
+
+
 }

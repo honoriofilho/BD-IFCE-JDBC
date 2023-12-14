@@ -1,13 +1,19 @@
+package Movies;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import Conexao.Conexao;
 
 public class MoviesDAO {
 
-    public void register(Movies m) throws SQLException {
+    public void register(Movies m, JComboBox cmbStreaming) throws SQLException {
 
         Connection conexao = Conexao.getConnection();
-        String sql = "INSERT INTO movies (titulo, ano, diretor, genero) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO movies (titulo, ano, diretor, genero, id_streaming) VALUES (?,?,?,?,?)";
 
         try (PreparedStatement smt = conexao.prepareStatement(sql)){
 
@@ -15,6 +21,19 @@ public class MoviesDAO {
             smt.setString(2, m.getAno());
             smt.setString(3, m.getDiretor());
             smt.setString(4,m.getGenero());
+
+            // Obtém o nome do streaming selecionado
+            String selectedStreaming = (String) cmbStreaming.getSelectedItem();
+
+            System.out.println(selectedStreaming);
+
+            int selectedStreamingId = getIdStreaming(selectedStreaming);
+            System.out.println(selectedStreamingId);
+
+            // Configura o id_streaming na PreparedStatement
+            smt.setInt(5, getIdStreaming(selectedStreaming));
+
+            System.out.println(getIdStreaming(selectedStreaming));
 
             smt.executeUpdate();
             smt.close();
@@ -66,7 +85,6 @@ public class MoviesDAO {
                 smt.setInt(1, m.getIdMovie());
 
                 smt.executeUpdate();
-                smt.close();
                 conexao.close();
 
                 JOptionPane.showMessageDialog(null, "Registro excluído com sucesso");
@@ -147,5 +165,40 @@ public class MoviesDAO {
             e.printStackTrace();
         }
         conexao.close();
+    }
+
+    private int getIdStreaming(String nomeStreaming) throws SQLException {
+        try (Connection conexao = Conexao.getConnection();
+             PreparedStatement smt = conexao.prepareStatement("SELECT id_streaming FROM streaming WHERE nome_streaming = ?")) {
+
+            smt.setString(1, nomeStreaming);
+
+            try (ResultSet resultSet = smt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id_streaming");
+                } else {
+                    // Handle caso não encontre o streaming
+                    return -1; // ou lance uma exceção, dependendo do seu caso
+                }
+            }
+        }
+    }
+
+    public List<String> getNomeStreaming(){
+        List<String> streamingNames = new ArrayList<>();
+
+        try (Connection conexao = Conexao.getConnection();
+             PreparedStatement statement = conexao.prepareStatement("SELECT nome_streaming FROM streaming");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                streamingNames.add(resultSet.getString("nome_streaming"));
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao obter nomes de streaming: " + ex.getMessage());
+        }
+
+        return streamingNames;
     }
 }

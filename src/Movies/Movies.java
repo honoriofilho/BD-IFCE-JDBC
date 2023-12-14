@@ -1,13 +1,24 @@
+package Movies;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.util.List;
 
-public class Movies extends MoviesForm{
+public class Movies extends MoviesForm {
     private int idMovie;
     private String titulo;
     private String ano;
     private String diretor;
     private String genero;
+    private int idStreaming;
+
+    public int getIdStreaming() {
+        return idStreaming;
+    }
+    public void setIdStreaming(int idStreaming) {
+        this.idStreaming = idStreaming;
+    }
 
     public int getIdMovie() {
         return idMovie;
@@ -62,8 +73,9 @@ public class Movies extends MoviesForm{
         System.out.println(m.getDiretor());
         System.out.println(m.getAno());
 
+
         MoviesDAO moviesDAO = new MoviesDAO();
-        moviesDAO.register(m);
+        moviesDAO.register(m, cmbStreaming);
 
         txtID.setText("");
         txtTitulo.setText("");
