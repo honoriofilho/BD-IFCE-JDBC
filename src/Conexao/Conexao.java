@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class Conexao {
     private static final String jdbc = "com.mysql.cj.jdbc.Driver";
     private static final String usuario = "root";
-    private static final String senha = "1234";
+    private static final String senha = "123456";
     private static final String url = "jdbc:mysql://localhost/letterboxd";
 
     public static Connection getConnection() throws SQLException {

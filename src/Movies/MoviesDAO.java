@@ -25,15 +25,11 @@ public class MoviesDAO {
             // Obtém o nome do streaming selecionado
             String selectedStreaming = (String) cmbStreaming.getSelectedItem();
 
-            System.out.println(selectedStreaming);
-
             int selectedStreamingId = getIdStreaming(selectedStreaming);
             System.out.println(selectedStreamingId);
 
             // Configura o id_streaming na PreparedStatement
             smt.setInt(5, getIdStreaming(selectedStreaming));
-
-            System.out.println(getIdStreaming(selectedStreaming));
 
             smt.executeUpdate();
             smt.close();
@@ -47,10 +43,10 @@ public class MoviesDAO {
 
     }
 
-    public void update(Movies m) throws SQLException {
+    public void update(Movies m, JComboBox cmbStreaming) throws SQLException {
 
         Connection conexao = Conexao.getConnection();
-        String sql = "UPDATE movies SET titulo = ?, ano = ?, diretor = ?, genero = ? WHERE id_movie = ?";
+        String sql = "UPDATE movies SET titulo = ?, ano = ?, diretor = ?, genero = ?, id_streaming = ? WHERE id_movie = ?";
 
         try (PreparedStatement smt = conexao.prepareStatement(sql)){
 
@@ -58,7 +54,16 @@ public class MoviesDAO {
             smt.setString(2, m.getAno());
             smt.setString(3, m.getDiretor());
             smt.setString(4,m.getGenero());
-            smt.setInt(5, m.getIdMovie());
+            smt.setInt(6, m.getIdMovie());
+
+            // Obtém o nome do streaming selecionado
+            String selectedStreaming = (String) cmbStreaming.getSelectedItem();
+
+            int selectedStreamingId = getIdStreaming(selectedStreaming);
+            System.out.println(selectedStreamingId);
+
+            // Configura o id_streaming na PreparedStatement
+            smt.setInt(5, getIdStreaming(selectedStreaming));
 
             smt.executeUpdate();
             smt.close();
@@ -98,7 +103,9 @@ public class MoviesDAO {
     public void show(JTable tbMovies) throws SQLException{
 
         Connection conexao = Conexao.getConnection();
-        String sql = "SELECT * FROM movies";
+        String sql =    "SELECT a.id_movie, a.titulo, a.ano, a.diretor, a.genero, b.nome_streaming "
+                        +"FROM movies AS a "
+                        +"INNER JOIN streaming AS b ON b.id_streaming = a.id_streaming";
         DefaultTableModel tblModel = (DefaultTableModel) tbMovies.getModel();
 
         tblModel.setRowCount(0);
@@ -120,8 +127,9 @@ public class MoviesDAO {
                 String ano = String.valueOf(results.getInt("ano"));
                 String diretor = results.getString("diretor");
                 String genero = results.getString("genero");
+                String nome_streaming = results.getString("nome_streaming");
 
-                String tbData[] = {id_movie,titulo,ano,diretor,genero};
+                String tbData[] = {id_movie,titulo,ano,diretor,genero, nome_streaming};
 
                 tblModel.addRow(tbData);
             }

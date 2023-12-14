@@ -165,7 +165,7 @@ public class Movies extends MoviesForm {
 
 
         MoviesDAO moviesDAO = new MoviesDAO();
-        moviesDAO.update(m);
+        moviesDAO.update(m, cmbStreaming);
 
         txtID.setText("");
         txtTitulo.setText("");
